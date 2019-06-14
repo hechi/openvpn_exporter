@@ -1,4 +1,5 @@
 // Copyright 2017 Kumina, https://kumina.nl/
+// Copyright 2019 Rajat Vig, https://rajatvig.keybase.pub/
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,29 +15,42 @@
 package main
 
 import (
-	"flag"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/common/log"
+	"github.com/prometheus/common/version"
 	"github.com/rajatvig/openvpn_exporter/exporters"
-	"log"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"net/http"
 	"strings"
 )
 
-func main() {
-	var (
-		listenAddress      = flag.String("web.listen-address", ":9176", "Address to listen on for web interface and telemetry.")
-		metricsPath        = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
-		openvpnStatusPaths = flag.String("openvpn.status_paths", "examples/client.status,examples/server2.status,examples/server3.status", "Paths at which OpenVPN places its status files.")
-		ignoreIndividuals  = flag.Bool("ignore.individuals", false, "If ignoring metrics for individuals")
-	)
-	flag.Parse()
+var (
+	listenAddress = kingpin.Flag("web.listen-address", "Address to listen on for web interface and telemetry.").
+		Default(":9176").
+		String()
+	metricsPath = kingpin.Flag("web.telemetry-path", "Path under which to expose metrics.").
+		Default("/metrics").
+		String()
+	openvpnStatusPaths = kingpin.Flag("openvpn.status_paths", "Paths at which OpenVPN places its status files.").
+		Default("examples/client.status,examples/server2.status,examples/server3.status").
+		String()
+	ignoreIndividuals = kingpin.Flag("ignore.individuals", "If ignoring metrics for individuals").
+		Default("true").
+		Bool()
+)
 
-	log.Printf("Starting OpenVPN Exporter\n")
-	log.Printf("Listen address: %v\n", *listenAddress)
-	log.Printf("Metrics path: %v\n", *metricsPath)
-	log.Printf("openvpn.status_path: %v\n", *openvpnStatusPaths)
-	log.Printf("Ignore Individuals: %v\n", *ignoreIndividuals)
+func main() {
+	log.AddFlags(kingpin.CommandLine)
+	kingpin.Version(version.Print("prom-metrics-writer"))
+	kingpin.HelpFlag.Short('h')
+	kingpin.Parse()
+
+	log.Info("Starting OpenVPN Exporter\n")
+	log.Infof("Listen address: %v\n", *listenAddress)
+	log.Infof("Metrics path: %v\n", *metricsPath)
+	log.Infof("openvpn.status_path: %v\n", *openvpnStatusPaths)
+	log.Infof("Ignore Individuals: %v\n", *ignoreIndividuals)
 
 	exporter, err := exporters.NewOpenVPNExporter(strings.Split(*openvpnStatusPaths, ","), *ignoreIndividuals)
 	if err != nil {

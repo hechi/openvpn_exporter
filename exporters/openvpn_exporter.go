@@ -5,8 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/log"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -324,7 +324,7 @@ func (e *OpenVPNExporter) Collect(ch chan<- prometheus.Metric) {
 				1.0,
 				statusPath)
 		} else {
-			log.Printf("Failed to scrape showq socket: %s", err)
+			log.Error("Failed to scrape showq socket", err)
 			ch <- prometheus.MustNewConstMetric(
 				e.openvpnUpDesc,
 				prometheus.GaugeValue,
