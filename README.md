@@ -73,20 +73,3 @@ E.g:
 ```sh
 openvpn_exporter -openvpn.status_paths /etc/openvpn/openvpn-status.log
 ```
-
-## Docker
-
-To use with docker you must mount your status file to `/etc/openvpn_exporter/server.status`.
-
-```sh
-docker run -p 9176:9176 \
-  -v /path/to/openvpn_server.status:/etc/openvpn_exporter/server.status \
-  kumina/openvpn-exporter -openvpn.status_paths /etc/openvpn_exporter/server.status
-```
-
-Metrics should be available at http://localhost:9176/metrics.
-
-## Get a standalone executable binary
-
-You can download the pre-compiled binaries from the
-[releases page](https://github.com/kumina/openvpn_exporter/releases).
