@@ -19,7 +19,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
-	"github.com/rajatvig/openvpn_exporter/exporters"
+	"github.com/rajatvig/openvpn_exporter/collector"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"net/http"
 	"strings"
@@ -52,9 +52,9 @@ func main() {
 	log.Infof("openvpn.status_path: %v\n", *openvpnStatusPaths)
 	log.Infof("Ignore Individuals: %v\n", *ignoreIndividuals)
 
-	exporter, err := exporters.NewOpenVPNExporter(strings.Split(*openvpnStatusPaths, ","), *ignoreIndividuals)
-	if err != nil {
-		panic(err)
+	exporter := collector.OpenVpn{
+		StatusPaths:       strings.Split(*openvpnStatusPaths, ","),
+		IgnoreIndividuals: *ignoreIndividuals,
 	}
 	prometheus.MustRegister(exporter)
 
