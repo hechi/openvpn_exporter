@@ -26,17 +26,35 @@ For clients status files, the exporter generates metrics that may look
 like this:
 
 ```
-openvpn_client_auth_read_bytes_total{status_path="..."} 3.08854782e+08
-openvpn_client_post_compress_bytes_total{status_path="..."} 4.5446864e+07
-openvpn_client_post_decompress_bytes_total{status_path="..."} 2.16965355e+08
-openvpn_client_pre_compress_bytes_total{status_path="..."} 4.538819e+07
-openvpn_client_pre_decompress_bytes_total{status_path="..."} 1.62596168e+08
-openvpn_client_tcp_udp_read_bytes_total{status_path="..."} 2.92806201e+08
-openvpn_client_tcp_udp_write_bytes_total{status_path="..."} 1.97558969e+08
-openvpn_client_tun_tap_read_bytes_total{status_path="..."} 1.53789941e+08
-openvpn_client_tun_tap_write_bytes_total{status_path="..."} 3.08764078e+08
-openvpn_status_update_time_seconds{status_path="..."} 1.490092749e+09
-openvpn_up{status_path="..."} 1
+# HELP openvpn_client_auth_read_bytes_total Total amount of authentication traffic read, in bytes.
+# TYPE openvpn_client_auth_read_bytes_total counter
+openvpn_client_auth_read_bytes_total{name="client"} 3.08854782e+08
+# HELP openvpn_client_post_compress_bytes_total Total amount of data after compression, in bytes.
+# TYPE openvpn_client_post_compress_bytes_total counter
+openvpn_client_post_compress_bytes_total{name="client"} 4.5446864e+07
+# HELP openvpn_client_post_decompress_bytes_total Total amount of data after decompression, in bytes.
+# TYPE openvpn_client_post_decompress_bytes_total counter
+openvpn_client_post_decompress_bytes_total{name="client"} 2.16965355e+08
+# HELP openvpn_client_pre_compress_bytes_total Total amount of data before compression, in bytes.
+# TYPE openvpn_client_pre_compress_bytes_total counter
+openvpn_client_pre_compress_bytes_total{name="client"} 4.538819e+07
+# HELP openvpn_client_pre_decompress_bytes_total Total amount of data before decompression, in bytes.
+# TYPE openvpn_client_pre_decompress_bytes_total counter
+openvpn_client_pre_decompress_bytes_total{name="client"} 1.62596168e+08
+# HELP openvpn_client_tcp_udp_read_bytes_total Total amount of TCP/UDP traffic read, in bytes.
+# TYPE openvpn_client_tcp_udp_read_bytes_total counter
+openvpn_client_tcp_udp_read_bytes_total{name="client"} 2.92806201e+08
+# HELP openvpn_client_tcp_udp_write_bytes_total Total amount of TCP/UDP traffic written, in bytes.
+# TYPE openvpn_client_tcp_udp_write_bytes_total counter
+openvpn_client_tcp_udp_write_bytes_total{name="client"} 1.97558969e+08
+# HELP openvpn_client_tun_tap_read_bytes_total Total amount of TUN/TAP traffic read, in bytes.
+# TYPE openvpn_client_tun_tap_read_bytes_total counter
+openvpn_client_tun_tap_read_bytes_total{name="client"} 1.53789941e+08
+# HELP openvpn_client_tun_tap_write_bytes_total Total amount of TUN/TAP traffic written, in bytes.
+# TYPE openvpn_client_tun_tap_write_bytes_total counter
+openvpn_client_tun_tap_write_bytes_total{name="client"} 3.08764078e+08
+openvpn_status_update_time_seconds{name="client"} 1.490117949e+09
+openvpn_up{name="client"} 1
 ```
 
 ### Server statistics
@@ -45,12 +63,54 @@ For server status files (both version 2 and 3), the exporter generates
 metrics that may look like this:
 
 ```
-openvpn_server_client_received_bytes_total{common_name="...",connection_time="...",real_address="...",status_path="...",username="...",virtual_address="..."} 139583
-openvpn_server_client_sent_bytes_total{common_name="...",connection_time="...",real_address="...",status_path="...",username="...",virtual_address="..."} 710764
-openvpn_server_route_last_reference_time_seconds{common_name="...",real_address="...",status_path="...",virtual_address="..."} 1.493018841e+09
-openvpn_status_update_time_seconds{status_path="..."} 1.490089154e+09
-openvpn_up{status_path="..."} 1
-openvpn_server_connected_clients 1
+# HELP openvpn_openvpn_server_connected_clients Number Of Connected Clients
+# TYPE openvpn_openvpn_server_connected_clients gauge
+openvpn_openvpn_server_connected_clients{name="server2"} 5
+openvpn_openvpn_server_connected_clients{name="server3"} 5
+# HELP openvpn_server_client_received_bytes_total Amount of data received over a connection on the VPN server, in bytes.
+# TYPE openvpn_server_client_received_bytes_total counter
+openvpn_server_client_received_bytes_total{common_name="redacted1",name="server2"} 6.93438277e+08
+openvpn_server_client_received_bytes_total{common_name="redacted1",name="server3"} 6.93438277e+08
+openvpn_server_client_received_bytes_total{common_name="redacted2",name="server2"} 2.925752e+06
+openvpn_server_client_received_bytes_total{common_name="redacted2",name="server3"} 2.925752e+06
+openvpn_server_client_received_bytes_total{common_name="redacted3",name="server2"} 5.7316467e+07
+openvpn_server_client_received_bytes_total{common_name="redacted3",name="server3"} 5.7316467e+07
+openvpn_server_client_received_bytes_total{common_name="redacted4",name="server2"} 2.4289622392e+10
+openvpn_server_client_received_bytes_total{common_name="redacted4",name="server3"} 2.4289622392e+10
+openvpn_server_client_received_bytes_total{common_name="redacted5",name="server2"} 2.7701784e+08
+openvpn_server_client_received_bytes_total{common_name="redacted5",name="server3"} 2.7701784e+08
+# HELP openvpn_server_client_sent_bytes_total Amount of data sent over a connection on the VPN server, in bytes.
+# TYPE openvpn_server_client_sent_bytes_total counter
+openvpn_server_client_sent_bytes_total{common_name="redacted1",name="server2"} 2.28390856e+08
+openvpn_server_client_sent_bytes_total{common_name="redacted1",name="server3"} 2.28390856e+08
+openvpn_server_client_sent_bytes_total{common_name="redacted2",name="server2"} 3.145665e+06
+openvpn_server_client_sent_bytes_total{common_name="redacted2",name="server3"} 3.145665e+06
+openvpn_server_client_sent_bytes_total{common_name="redacted3",name="server2"} 6.11736741e+08
+openvpn_server_client_sent_bytes_total{common_name="redacted3",name="server3"} 6.11736741e+08
+openvpn_server_client_sent_bytes_total{common_name="redacted4",name="server2"} 7.0914674697e+10
+openvpn_server_client_sent_bytes_total{common_name="redacted4",name="server3"} 7.0914674697e+10
+openvpn_server_client_sent_bytes_total{common_name="redacted5",name="server2"} 1.544465106e+09
+openvpn_server_client_sent_bytes_total{common_name="redacted5",name="server3"} 1.544465106e+09
+# HELP openvpn_server_route_last_reference_time_seconds Time at which a route was last referenced, in seconds.
+# TYPE openvpn_server_route_last_reference_time_seconds gauge
+openvpn_server_route_last_reference_time_seconds{common_name="redacted1",name="server2"} 1.490088408e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted1",name="server3"} 1.490088408e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted2",name="server2"} 1.489680538e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted2",name="server3"} 1.489680538e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted3",name="server2"} 1.490089146e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted3",name="server3"} 1.490089146e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted4",name="server2"} 1.490089153e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted4",name="server3"} 1.490089153e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted5",name="server2"} 1.490089106e+09
+openvpn_server_route_last_reference_time_seconds{common_name="redacted5",name="server3"} 1.490089106e+09
+# HELP openvpn_status_update_time_seconds UNIX timestamp at which the OpenVPN statistics were updated.
+# TYPE openvpn_status_update_time_seconds gauge
+openvpn_status_update_time_seconds{name="server2"} 1.490089154e+09
+openvpn_status_update_time_seconds{name="server3"} 1.490089154e+09
+# HELP openvpn_up Whether scraping OpenVPN's metrics was successful.
+# TYPE openvpn_up gauge
+openvpn_up{name="server2"} 1
+openvpn_up{name="server3"} 1
 ```
 
 ## Usage
@@ -58,18 +118,36 @@ openvpn_server_connected_clients 1
 Usage of openvpn_exporter:
 
 ```sh
-  -openvpn.status_paths string
-    	Paths at which OpenVPN places its status files. (default "examples/client.status,examples/server2.status,examples/server3.status")
-  -web.listen-address string
+  --config.file string
+        Config file for the exporter (default "examples/config.yaml")
+  --web.listen-address string
     	Address to listen on for web interface and telemetry. (default ":9176")
-  -web.telemetry-path string
+  --web.telemetry-path string
     	Path under which to expose metrics. (default "/metrics")
-  -ignore.individuals bool
+  --ignore.individuals bool
         If ignoring metrics for individuals (default false)
+  --log.level="info"    
+        Only log messages with the given severity or above. Valid levels: [debug, info, warn, error, fatal]
+  --log.format="logger:stderr"
+        Set the log target and format. Example: "logger:syslog?appname=bob&local=7" or "logger:stdout?json=true"
+  --version             
+        Show application version.
 ```
 
 E.g:
 
 ```sh
-openvpn_exporter -openvpn.status_paths /etc/openvpn/openvpn-status.log
+openvpn_exporter --config.file=/etc/sysconfig/openvpn_exporter_config.yaml
+```
+
+E.g. Config file
+
+```yaml
+configs:
+  - name: server2
+    logfile: examples/server2.status
+  - name: server3
+    logfile: examples/server3.status
+  - name: client
+    logfile: examples/client.status
 ```

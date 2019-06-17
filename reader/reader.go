@@ -6,19 +6,20 @@ import (
 	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
+	"github.com/rajatvig/openvpn_exporter/config"
 	"github.com/rajatvig/openvpn_exporter/parsers"
 	"os"
 )
 
 type Reader struct {
-	statusPath string
-	client     parsers.Client
-	server     parsers.Server
+	c      config.Config
+	client parsers.Client
+	server parsers.Server
 }
 
-func New(statusPath string, ignoreIndividuals bool) (*Reader, error) {
+func New(c config.Config, ignoreIndividuals bool) (*Reader, error) {
 	return &Reader{
-		statusPath: statusPath,
+		c: c,
 		client:     parsers.NewClient(),
 		server:     parsers.NewServer(ignoreIndividuals),
 	}, nil
@@ -29,7 +30,7 @@ func New(statusPath string, ignoreIndividuals bool) (*Reader, error) {
 // client metrics. For server metrics, it also distinguishes between the
 // version 2 and 3 file formats.
 func (r *Reader) CollectStatus(ch chan<- prometheus.Metric) error {
-	conn, err := os.Open(r.statusPath)
+	conn, err := os.Open(r.c.LogFile)
 	defer conn.Close()
 	if err != nil {
 		log.Error("error opening file", err)
@@ -45,15 +46,15 @@ func (r *Reader) CollectStatus(ch chan<- prometheus.Metric) error {
 
 	if bytes.HasPrefix(buf, []byte("TITLE,")) {
 		// Server statistics, using format version 2.
-		return r.server.CollectServerStatusFromReader(r.statusPath, reader, ch, ",")
+		return r.server.CollectServerStatusFromReader(r.c.Name, reader, ch, ",")
 	} else if bytes.HasPrefix(buf, []byte("TITLE\t")) {
 		// Server statistics, using format version 3. The only
 		// difference compared to version 2 is that it uses tabs
 		// instead of spaces.
-		return r.server.CollectServerStatusFromReader(r.statusPath, reader, ch, "\t")
+		return r.server.CollectServerStatusFromReader(r.c.Name, reader, ch, "\t")
 	} else if bytes.HasPrefix(buf, []byte("OpenVPN STATISTICS")) {
 		// Client statistics.
-		return r.client.CollectClientStatusFromReader(r.statusPath, reader, ch)
+		return r.client.CollectClientStatusFromReader(r.c.Name, reader, ch)
 	} else {
 		return fmt.Errorf("unexpected file contents: %q", buf)
 	}

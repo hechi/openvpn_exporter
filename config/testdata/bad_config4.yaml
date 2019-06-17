@@ -1,0 +1,4 @@
+configs:
+  - name: server2
+    logfile: examples/server2.status
+    blah: false

@@ -1,0 +1,7 @@
+configs:
+  - name: server2
+    logfile: examples/server2.status
+  - name: server3
+    logfile: examples/server3.status
+  - name: client
+    logfile: examples/client.status

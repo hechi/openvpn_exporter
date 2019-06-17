@@ -20,39 +20,39 @@ func NewClient() Client {
 		"TUN/TAP read bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "tun_tap_read_bytes_total"),
 			"Total amount of TUN/TAP traffic read, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"TUN/TAP write bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "tun_tap_write_bytes_total"),
 			"Total amount of TUN/TAP traffic written, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"TCP/UDP read bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "tcp_udp_read_bytes_total"),
 			"Total amount of TCP/UDP traffic read, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"TCP/UDP write bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "tcp_udp_write_bytes_total"),
 			"Total amount of TCP/UDP traffic written, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"Auth read bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "auth_read_bytes_total"),
 			"Total amount of authentication traffic read, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"pre-compress bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "pre_compress_bytes_total"),
 			"Total amount of data before compression, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"post-compress bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "post_compress_bytes_total"),
 			"Total amount of data after compression, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"pre-decompress bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "pre_decompress_bytes_total"),
 			"Total amount of data before decompression, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 		"post-decompress bytes": prometheus.NewDesc(
 			prometheus.BuildFQName("openvpn", "client", "post_decompress_bytes_total"),
 			"Total amount of data after decompression, in bytes.",
-			[]string{"status_path"}, nil),
+			[]string{"name"}, nil),
 	}
 
 	return Client{
@@ -61,7 +61,7 @@ func NewClient() Client {
 }
 
 // Converts OpenVPN client status information into Prometheus metrics.
-func (c Client) CollectClientStatusFromReader(statusPath string, file io.Reader, ch chan<- prometheus.Metric) error {
+func (c Client) CollectClientStatusFromReader(name string, file io.Reader, ch chan<- prometheus.Metric) error {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
@@ -81,7 +81,7 @@ func (c Client) CollectClientStatusFromReader(statusPath string, file io.Reader,
 				openvpnStatusUpdateTimeDesc,
 				prometheus.GaugeValue,
 				float64(timeParser.Unix()),
-				statusPath)
+				name)
 		} else if desc, ok := c.openvpnClientDescs[fields[0]]; ok && len(fields) == 2 {
 			// Traffic counters.
 			value, err := strconv.ParseFloat(fields[1], 64)
@@ -92,7 +92,7 @@ func (c Client) CollectClientStatusFromReader(statusPath string, file io.Reader,
 				desc,
 				prometheus.CounterValue,
 				value,
-				statusPath)
+				name)
 		} else {
 			return fmt.Errorf("unsupported key: %q", fields[0])
 		}

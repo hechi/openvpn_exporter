@@ -6,5 +6,5 @@ var (
 	openvpnStatusUpdateTimeDesc = prometheus.NewDesc(
 		prometheus.BuildFQName("openvpn", "", "status_update_time_seconds"),
 		"UNIX timestamp at which the OpenVPN statistics were updated.",
-		[]string{"status_path"}, nil)
+		[]string{"name"}, nil)
 )

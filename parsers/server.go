@@ -15,7 +15,7 @@ var (
 	openvpnConnectedClientsDesc = prometheus.NewDesc(
 		prometheus.BuildFQName("openvpn", "", "openvpn_server_connected_clients"),
 		"Number Of Connected Clients",
-		[]string{"status_path"}, nil)
+		[]string{"name"}, nil)
 )
 
 type OpenvpnServerHeader struct {
@@ -39,14 +39,14 @@ func NewServer(ignoreIndividuals bool) Server {
 	var serverHeaderRoutingLabels []string
 	var serverHeaderRoutingLabelColumns []string
 	if ignoreIndividuals {
-		serverHeaderClientLabels = []string{"status_path", "common_name"}
+		serverHeaderClientLabels = []string{"name", "common_name"}
 		serverHeaderClientLabelColumns = []string{"Common Name"}
-		serverHeaderRoutingLabels = []string{"status_path", "common_name"}
+		serverHeaderRoutingLabels = []string{"name", "common_name"}
 		serverHeaderRoutingLabelColumns = []string{"Common Name"}
 	} else {
-		serverHeaderClientLabels = []string{"status_path", "common_name", "connection_time", "real_address", "virtual_address", "username"}
+		serverHeaderClientLabels = []string{"name", "common_name", "connection_time", "real_address", "virtual_address", "username"}
 		serverHeaderClientLabelColumns = []string{"Common Name", "Connected Since (time_t)", "Real Address", "Virtual Address", "Username"}
-		serverHeaderRoutingLabels = []string{"status_path", "common_name", "real_address", "virtual_address"}
+		serverHeaderRoutingLabels = []string{"name", "common_name", "real_address", "virtual_address"}
 		serverHeaderRoutingLabelColumns = []string{"Common Name", "Real Address", "Virtual Address"}
 	}
 
@@ -93,7 +93,7 @@ func NewServer(ignoreIndividuals bool) Server {
 }
 
 // Converts OpenVPN server status information into Prometheus metrics.
-func (s Server) CollectServerStatusFromReader(statusPath string, file io.Reader, ch chan<- prometheus.Metric, separator string) error {
+func (s Server) CollectServerStatusFromReader(name string, file io.Reader, ch chan<- prometheus.Metric, separator string) error {
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
 	headersFound := map[string][]string{}
@@ -120,7 +120,7 @@ func (s Server) CollectServerStatusFromReader(statusPath string, file io.Reader,
 				openvpnStatusUpdateTimeDesc,
 				prometheus.GaugeValue,
 				timeStartStats,
-				statusPath)
+				name)
 		} else if fields[0] == "TITLE" && len(fields) == 2 {
 			// OpenVPN version number.
 		} else if header, ok := s.openvpnServerHeaders[fields[0]]; ok {
@@ -146,7 +146,7 @@ func (s Server) CollectServerStatusFromReader(statusPath string, file io.Reader,
 			}
 
 			// Extract columns that should act as entry labels.
-			labels := []string{statusPath}
+			labels := []string{name}
 			for _, column := range header.LabelColumns {
 				labels = append(labels, columnValues[column])
 			}
@@ -175,7 +175,7 @@ func (s Server) CollectServerStatusFromReader(statusPath string, file io.Reader,
 		openvpnConnectedClientsDesc,
 		prometheus.GaugeValue,
 		float64(numberConnectedClient),
-		statusPath)
+		name)
 
 	return scanner.Err()
 }
