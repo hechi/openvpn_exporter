@@ -34,7 +34,7 @@ func (o OpenVpn) Collect(ch chan<- prometheus.Metric) {
 		}
 		err = r.CollectStatus(ch)
 		if err != nil {
-			log.Error("failed to scrape showq socket", err)
+			log.Error("failed to scrape log file", err)
 			ch <- prometheus.MustNewConstMetric(openvpnUpDesc, prometheus.GaugeValue, 0.0, c.Name)
 			return
 		}
