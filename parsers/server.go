@@ -30,7 +30,7 @@ type OpenvpnServerHeaderField struct {
 }
 
 type Server struct {
-	openvpnServerHeaders        map[string]OpenvpnServerHeader
+	openvpnServerHeaders map[string]OpenvpnServerHeader
 }
 
 func NewServer(ignoreIndividuals bool) Server {
@@ -88,7 +88,7 @@ func NewServer(ignoreIndividuals bool) Server {
 	}
 
 	return Server{
-		openvpnServerHeaders:        openvpnServerHeaders,
+		openvpnServerHeaders: openvpnServerHeaders,
 	}
 }
 
@@ -99,6 +99,8 @@ func (s Server) CollectServerStatusFromReader(name string, file io.Reader, ch ch
 	headersFound := map[string][]string{}
 	// counter of connected client
 	numberConnectedClient := 0
+
+	recordedMetrics := map[OpenvpnServerHeaderField][]string{}
 
 	for scanner.Scan() {
 		fields := strings.Split(scanner.Text(), separator)
@@ -154,16 +156,19 @@ func (s Server) CollectServerStatusFromReader(name string, file io.Reader, ch ch
 			// Export relevant columns as individual metrics.
 			for _, metric := range header.Metrics {
 				if columnValue, ok := columnValues[metric.Column]; ok {
-					value, err := strconv.ParseFloat(columnValue, 64)
-					if err != nil {
-						log.Error("error parsing float", err)
-						return err
+					if _, ok := recordedMetrics[metric]; !ok {
+						value, err := strconv.ParseFloat(columnValue, 64)
+						if err != nil {
+							log.Error("error parsing float", err)
+							return err
+						}
+						ch <- prometheus.MustNewConstMetric(
+							metric.Desc,
+							metric.ValueType,
+							value,
+							labels...)
+						recordedMetrics[metric] = labels
 					}
-					ch <- prometheus.MustNewConstMetric(
-						metric.Desc,
-						metric.ValueType,
-						value,
-						labels...)
 				}
 			}
 		} else {

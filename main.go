@@ -30,17 +30,17 @@ import (
 
 var (
 	listenAddress = kingpin.Flag("web.listen-address", "Address to listen on for web interface and telemetry.").
-		Default(":9176").
-		String()
+			Default(":9176").
+			String()
 	metricsPath = kingpin.Flag("web.telemetry-path", "Path under which to expose metrics.").
-		Default("/metrics").
-		String()
+			Default("/metrics").
+			String()
 	configFile = kingpin.Flag("config.file", "Config file for the exporter").
-		Default("examples/config.yaml").
-		String()
+			Default("examples/config.yaml").
+			String()
 	ignoreIndividuals = kingpin.Flag("ignore.individuals", "If ignoring metrics for individuals").
-		Default("true").
-		Bool()
+				Default("true").
+				Bool()
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 
 func run() int {
 	log.AddFlags(kingpin.CommandLine)
-	kingpin.Version(version.Print("prom-metrics-writer"))
+	kingpin.Version(version.Print("openvpn_exporter"))
 	kingpin.HelpFlag.Short('h')
 	kingpin.Parse()
 

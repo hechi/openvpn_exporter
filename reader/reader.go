@@ -19,9 +19,9 @@ type Reader struct {
 
 func New(c config.Config, ignoreIndividuals bool) (*Reader, error) {
 	return &Reader{
-		c: c,
-		client:     parsers.NewClient(),
-		server:     parsers.NewServer(ignoreIndividuals),
+		c:      c,
+		client: parsers.NewClient(),
+		server: parsers.NewServer(ignoreIndividuals),
 	}, nil
 }
 
